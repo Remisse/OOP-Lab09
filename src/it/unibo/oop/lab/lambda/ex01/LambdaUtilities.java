@@ -61,10 +61,8 @@ public final class LambdaUtilities {
      */
     public static <T> List<Optional<T>> optFilter(final List<T> list, final Predicate<T> pre) {
         final List<Optional<T>> outList = new ArrayList<>(list.size());
-        list.forEach(el -> {
-            outList.add(Optional.of(el)
-                                .filter(pre));
-        });
+        list.forEach(el -> outList.add(Optional.of(el)
+                                               .filter(pre)));
         return outList;
     }
 
@@ -107,9 +105,7 @@ public final class LambdaUtilities {
      */
     public static <K, V> Map<K, V> fill(final Map<K, Optional<V>> map, final Supplier<V> def) {
         final Map<K, V> outMap = new HashMap<>();
-        map.forEach((k, v) -> {
-            outMap.putIfAbsent(k, v.orElse(def.get()));
-        });
+        map.forEach((k, v) -> outMap.putIfAbsent(k, v.orElse(def.get())));
         return outMap;
     }
 
