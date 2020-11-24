@@ -3,10 +3,12 @@ package it.unibo.oop.lab.lambda.ex02;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.stream.Stream;
+import static java.util.stream.Collectors.*;
 
 /**
  *
@@ -16,12 +18,10 @@ public final class MusicGroupImpl implements MusicGroup {
     private final Map<String, Integer> albums = new HashMap<>();
     private final Set<Song> songs = new HashSet<>();
 
-    @Override
     public void addAlbum(final String albumName, final int year) {
         this.albums.put(albumName, year);
     }
 
-    @Override
     public void addSong(final String songName, final Optional<String> albumName, final double duration) {
         if (albumName.isPresent() && !this.albums.containsKey(albumName.get())) {
             throw new IllegalArgumentException("invalid album name");
@@ -29,44 +29,60 @@ public final class MusicGroupImpl implements MusicGroup {
         this.songs.add(new MusicGroupImpl.Song(songName, albumName, duration));
     }
 
-    @Override
     public Stream<String> orderedSongNames() {
-        return null;
+        return this.songs.stream()
+                         .map(Song::getSongName)
+                         .sorted();
     }
 
-    @Override
     public Stream<String> albumNames() {
-        return null;
+        return this.albums.entrySet().stream()
+                                     .map(Entry::getKey);
     }
 
-    @Override
     public Stream<String> albumInYear(final int year) {
-        return null;
+        return this.albums.entrySet().stream()
+                                     .filter(e -> e.getValue() == year)
+                                     .map(Entry::getKey);
     }
 
-    @Override
+    private Stream<Song> getSongsInAlbum(final String albumName) {
+        return this.songs.stream()
+                         .filter(s -> s.getAlbumName().filter(o -> o.equals(albumName)).isPresent());
+    }
+
     public int countSongs(final String albumName) {
-        return -1;
+        return (int) this.getSongsInAlbum(albumName)
+                         .count();
     }
 
-    @Override
     public int countSongsInNoAlbum() {
-        return -1;
+        return (int) this.songs.stream()
+                               .filter(s -> s.getAlbumName().isEmpty())
+                               .count();
     }
 
-    @Override
     public OptionalDouble averageDurationOfSongs(final String albumName) {
-        return null;
+        return this.getSongsInAlbum(albumName)
+                   .mapToDouble(Song::getDuration)
+                   .average();
     }
 
-    @Override
     public Optional<String> longestSong() {
-        return null;
+        return Optional.of(this.songs.stream()
+                                     .collect(maxBy((s1, s2) -> Double.compare(s1.getDuration(),
+                                                                               s2.getDuration())))
+                                     .get()
+                                     .getSongName());
+
     }
 
-    @Override
     public Optional<String> longestAlbum() {
-        return null;
+        //For each album, create a stream containing all the songs in that album
+        //Do a reduce to each of these streams
+        //Return the max
+        //Alternatively, collect every song in a map and group them by album?
+        return Optional.empty();
     }
 
     private static final class Song {
@@ -95,7 +111,6 @@ public final class MusicGroupImpl implements MusicGroup {
             return duration;
         }
 
-        @Override
         public int hashCode() {
             if (hash == 0) {
                 hash = songName.hashCode() ^ albumName.hashCode() ^ Double.hashCode(duration);
@@ -103,7 +118,6 @@ public final class MusicGroupImpl implements MusicGroup {
             return hash;
         }
 
-        @Override
         public boolean equals(final Object obj) {
             if (obj instanceof Song) {
                 final Song other = (Song) obj;
@@ -113,7 +127,6 @@ public final class MusicGroupImpl implements MusicGroup {
             return false;
         }
 
-        @Override
         public String toString() {
             return "Song [songName=" + songName + ", albumName=" + albumName + ", duration=" + duration + "]";
         }
