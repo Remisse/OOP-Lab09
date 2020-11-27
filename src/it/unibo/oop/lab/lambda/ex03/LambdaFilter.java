@@ -43,24 +43,24 @@ public final class LambdaFilter extends JFrame {
         IDENTITY("No modifications", Function.identity()),
         LOWERCASE("Convert to lowercase", String::toLowerCase),
         CHAR_COUNT("Count all characters", s -> String.valueOf(s.chars()
-                                                      .count())),
+                                                                .count())),
         LINE_COUNT("Count all lines", s -> String.valueOf(s.chars()
-                                            .filter(c -> c == '\n' || c == '\r')
-                                            .count() + 1)), //counting the last empty line if it's present
+                                                         .filter(c -> c == '\n' || c == '\r')
+                                                         .count() + 1)), //counting the last empty line if it's present
         ALPHABETICAL("Sort all words by alphabetical order", s -> Pattern.compile(PATTERN)
-                                                                    .splitAsStream(s)
-                                                                    .filter(w -> !w.isBlank())
-                                                                    .distinct()
-                                                                    .sorted()
-                                                                    .collect(joining("\n"))),
+                                                                         .splitAsStream(s)
+                                                                         .filter(w -> !w.isBlank())
+                                                                         .distinct()
+                                                                         .sorted()
+                                                                         .collect(joining("\n"))),
         OCCURRENCES("Count all occurrences of each word", s -> Pattern.compile(PATTERN)
-                                                                  .splitAsStream(s)
-                                                                  .filter(w -> !w.isBlank())
-                                                                  .collect(toMap(w -> w, w -> 1, Integer::sum))
-                                                                  .entrySet()
-                                                                  .stream()
-                                                                  .map(e -> e.getKey() + " -> " + e.getValue())
-                                                                  .collect(joining("\n")));
+                                                                      .splitAsStream(s)
+                                                                      .filter(w -> !w.isBlank())
+                                                                      .collect(toMap(w -> w, w -> 1, Integer::sum))
+                                                                      .entrySet()
+                                                                      .stream()
+                                                                      .map(e -> e.getKey() + " -> " + e.getValue())
+                                                                      .collect(joining("\n")));
 
         private final String commandName;
         private final Function<String, String> fun;
