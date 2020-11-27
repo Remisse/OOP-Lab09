@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Toolkit;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -14,6 +15,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Modify this small program adding new filters.
@@ -33,25 +37,45 @@ import javax.swing.JTextArea;
 public final class LambdaFilter extends JFrame {
 
     private static final long serialVersionUID = 1760990730218643730L;
+    private static final String PATTERN = "\\W+";
 
     private enum Command {
-        IDENTITY("No modifications", Function.identity());
+        IDENTITY("No modifications", Function.identity()),
+        LOWERCASE("Convert to lowercase", String::toLowerCase),
+        CHAR_COUNT("Count all characters", s -> String.valueOf(s.chars()
+                                                      .count())),
+        LINE_COUNT("Count all lines", s -> String.valueOf(s.chars()
+                                            .filter(c -> c == '\n' || c == '\r')
+                                            .count() + 1)), //counting the last empty line if it's present
+        ALPHABETICAL("Sort all words by alphabetical order", s -> Pattern.compile(PATTERN)
+                                                                    .splitAsStream(s)
+                                                                    .filter(w -> !w.isBlank())
+                                                                    .distinct()
+                                                                    .sorted()
+                                                                    .collect(joining("\n"))),
+        OCCURRENCES("Count all occurrences of each word", s -> Pattern.compile(PATTERN)
+                                                                  .splitAsStream(s)
+                                                                  .filter(w -> !w.isBlank())
+                                                                  .collect(toMap(w -> w, w -> 1, Integer::sum))
+                                                                  .entrySet()
+                                                                  .stream()
+                                                                  .map(e -> e.getKey() + " -> " + e.getValue())
+                                                                  .collect(joining("\n")));
 
         private final String commandName;
         private final Function<String, String> fun;
 
         Command(final String name, final Function<String, String> process) {
-            commandName = name;
-            fun = process;
+            this.commandName = name;
+            this.fun = process;
         }
 
-        @Override
         public String toString() {
-            return commandName;
+            return this.commandName;
         }
 
         public String translate(final String s) {
-            return fun.apply(s);
+            return this.fun.apply(s);
         }
     }
 
