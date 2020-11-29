@@ -50,7 +50,6 @@ public final class LambdaFilter extends JFrame {
         ALPHABETICAL("Sort all words by alphabetical order", s -> Pattern.compile(PATTERN)
                                                                          .splitAsStream(s)
                                                                          .filter(w -> !w.isBlank())
-                                                                         .distinct()
                                                                          .sorted()
                                                                          .collect(joining("\n"))),
         OCCURRENCES("Count all occurrences of each word", s -> Pattern.compile(PATTERN)
