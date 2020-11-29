@@ -91,11 +91,8 @@ public final class MusicGroupImpl implements MusicGroup {
     public Optional<String> longestAlbum() {
         return this.albums.entrySet()
                           .stream()
-                          .map(e -> {
-                              final String name = e.getKey();
-                              return Map.entry(name, this.albumLength(name));
-                          })
-                          .max((e1, e2) -> Double.compare(e1.getValue(), e2.getValue()))
+                          .max((e1, e2) -> Double.compare(albumLength(e1.getKey()),
+                                                          albumLength(e2.getKey())))
                           .map(Entry::getKey);
     }
 
