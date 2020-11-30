@@ -80,7 +80,7 @@ public final class LambdaUtilities {
     public static <R, T> Map<R, Set<T>> group(final List<T> list, final Function<T, R> op) {
         final Map<R, Set<T>> outMap = new HashMap<>();
         list.forEach(el -> {
-            Set<T> newSet = new HashSet<>();
+            final Set<T> newSet = new HashSet<>();
             newSet.add(el);
             outMap.merge(op.apply(el), newSet, (s1, s2) -> {
                 s1.addAll(s2);
