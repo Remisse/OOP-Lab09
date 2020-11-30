@@ -30,19 +30,19 @@ public final class MusicGroupImpl implements MusicGroup {
 
     public Stream<String> orderedSongNames() {
         return this.songs.stream()
-                         .map(Song::getSongName)
-                         .sorted();
+                .map(Song::getSongName)
+                .sorted();
     }
 
     public Stream<String> albumNames() {
         return this.albums.entrySet().stream()
-                                     .map(Entry::getKey);
+                .map(Entry::getKey);
     }
 
     public Stream<String> albumInYear(final int year) {
         return this.albums.entrySet().stream()
-                                     .filter(e -> e.getValue() == year)
-                                     .map(Entry::getKey);
+                .filter(e -> e.getValue() == year)
+                .map(Entry::getKey);
     }
 
     /*
@@ -50,32 +50,32 @@ public final class MusicGroupImpl implements MusicGroup {
      */
     private Stream<Song> getSongsInAlbum(final String albumName) {
         return this.songs.stream()
-                         .filter(s -> s.getAlbumName().filter(o -> o.equals(albumName)).isPresent());
+                .filter(s -> s.getAlbumName().filter(o -> o.equals(albumName)).isPresent());
     }
 
     public int countSongs(final String albumName) {
         return this.getSongsInAlbum(albumName)
-                   .mapToInt(s -> 1)
-                   .sum();
+                .mapToInt(s -> 1)
+                .sum();
     }
 
     public int countSongsInNoAlbum() {
         return this.songs.stream()
-                         .filter(s -> s.getAlbumName().isEmpty())
-                         .mapToInt(s -> 1)
-                         .sum();
+                .filter(s -> s.getAlbumName().isEmpty())
+                .mapToInt(s -> 1)
+                .sum();
     }
 
     public OptionalDouble averageDurationOfSongs(final String albumName) {
         return this.getSongsInAlbum(albumName)
-                   .mapToDouble(Song::getDuration)
-                   .average();
+                .mapToDouble(Song::getDuration)
+                .average();
     }
 
     public Optional<String> longestSong() {
         return this.songs.stream()
-                         .max((s1, s2) -> Double.compare(s1.getDuration(), s2.getDuration()))
-                         .map(Song::getSongName);
+                .max((s1, s2) -> Double.compare(s1.getDuration(), s2.getDuration()))
+                .map(Song::getSongName);
     }
 
     /*
@@ -83,16 +83,15 @@ public final class MusicGroupImpl implements MusicGroup {
      */
     private double albumLength(final String album) {
         return this.songs.stream()
-                         .filter(s -> s.getAlbumName().filter(a -> a.equals(album)).isPresent())
-                         .mapToDouble(Song::getDuration)
-                         .sum();
+                .filter(s -> s.getAlbumName().filter(a -> a.equals(album)).isPresent())
+                .mapToDouble(Song::getDuration)
+                .sum();
     }
 
     public Optional<String> longestAlbum() {
         return this.albums.keySet()
-                          .stream()
-                          .max((a1, a2) -> Double.compare(albumLength(a1),
-                                                          albumLength(a2)));
+                .stream()
+                .max((a1, a2) -> Double.compare(albumLength(a1), albumLength(a2)));
     }
 
     private static final class Song {
